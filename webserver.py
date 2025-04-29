@@ -17,16 +17,11 @@ while True:
 
     # Get the client request
     request = client_connection.recv(1024).decode()
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + request)
+    print(request)
 
     # Parse HTTP headers
     headers = request.split('\n')
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA HEADERS AAAAAAAAAAAAAAAAAAAAA")
-    print(headers)
-    filename = headers[0].split()[1]
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA FILENAME AAAAAAAAAAAAAAAAAAAAA")
-    print(filename)
-    
+    filename = headers[0].split()[1]    
 
     # Get the content of the file
     if filename == '/':
