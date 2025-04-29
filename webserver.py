@@ -1,15 +1,15 @@
 import socket
 
 # Define socket host and port
-SERVER_HOST = '127.0.0.1'
-SERVER_PORT = 8000
+HOST = '127.0.0.1'
+PORT = 8000
 
 # Create socket
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-server_socket.bind((SERVER_HOST, SERVER_PORT))
+server_socket.bind((HOST, PORT))
 server_socket.listen(1)
-print('Listening on port %s ...' % SERVER_PORT)
+print('Listening on port %s ...' % PORT)
 
 while True:    
     # Wait for client connections
@@ -17,14 +17,32 @@ while True:
 
     # Get the client request
     request = client_connection.recv(1024).decode()
-    print(request)
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + request)
 
-    fin = open('index.html')
-    content = fin.read()
-    fin.close()
+    # Parse HTTP headers
+    headers = request.split('\n')
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA HEADERS AAAAAAAAAAAAAAAAAAAAA")
+    print(headers)
+    filename = headers[0].split()[1]
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA FILENAME AAAAAAAAAAAAAAAAAAAAA")
+    print(filename)
+    
+
+    # Get the content of the file
+    if filename == '/':
+        filename = '/index.html'
+
+    try:
+        fin = open('docs' + filename)
+        content = fin.read()
+        fin.close()
+
+        response = 'HTTP/1.0 200 OK\n\n' + content
+    except FileNotFoundError:
+        response = 'HTTP/1.0 404 NOT FOUND\n\nFile not found'
 
     # Send HTTP response
-    response = 'HTTP/1.0 200 OK\n\n' + content
+    
     client_connection.sendall(response.encode())
     client_connection.close()
 
