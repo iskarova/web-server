@@ -25,7 +25,7 @@ while True:
 
     # Get the content of the file
     if filename == '/':
-        filename = '/index.html'
+        filename = '/index2.html'
 
     try:
         fin = open('docs' + filename)
