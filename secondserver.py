@@ -1,59 +1,13 @@
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
+from caseClasses import case_no_file
+from caseClasses import case_existing_file
+from caseClasses import case_always_fail
+from caseClasses import case_dir_index_file
+from caseClasses import case_dir_no_index_file
 
 
-class ServerException(Exception):
-    pass
-
-class case_no_file(object):
-    def test(self, handler):
-      return not os.path.exists(handler.full_path)
-  
-    def act(self, handler):
-      raise ServerException("'{0}' not found".format(handler.path))
-  
-  
-class case_existing_file(object):
-    def test(self, handler):
-      return os.path.isfile(handler.full_path)
-  
-    def act(self, handler):
-      handler.handle_file(handler.full_path)
-    
-    
-class case_always_fail(object):
-    def test(self, handler):
-      return True
-  
-    def act(self, handler):
-      raise ServerException("Unknown object '{0}'".format(handler.path))    
-    
-    
-class case_dir_index_file(object):
-    def index_path(self, handler):
-      return os.path.join(handler.full_path, 'index.html')
-  
-    def test(self, handler):
-      return os.path.isdir(handler.full_path) and \
-            os.path.isfile(self.index_path(handler))
-    
-    def act(self, handler):
-      handler.handle_file(self.index_path(handler))
-
-
-class case_dir_no_index_file(object):
-    def index_path(self, handler):
-      return os.path.join(handler.full_path, 'index.html')
-  
-    def test(self, handler):
-      return os.path.isdir(handler.full_path) and \
-            not os.path.isfile(self.index_path(handler))
-    
-    def act(self, handler):
-      handler.list_dir(handler.full_path)
-    
-    
-    
 class RequestHandler(BaseHTTPRequestHandler):
 
   Cases = [case_no_file(),
@@ -110,18 +64,6 @@ class RequestHandler(BaseHTTPRequestHandler):
     except IOError as msg:
       msg = "'{0}' cannot be read: {1}".format(self.path, msg)
       self.handle_error(msg)
-    
-    
-  # def create_page(self):
-  #   values = {
-  #     'date_time'   : self.date_time_string(),
-  #     'client_host' : self.client_address[0],
-  #     'client_port' : self.client_address[1],
-  #     'command'     : self.command,
-  #     'path'        : self.path 
-  #   }
-  #   page = self.Page.format(**values)
-  #   return page
   
   
   Listing_Page = '''\
@@ -142,6 +84,8 @@ class RequestHandler(BaseHTTPRequestHandler):
     except OSError as msg:
       msg = "'{0}' cannot be listed: {1}".format(self.path, msg)
       self.handle_error(msg)
+    
+    
     
 #_______________________________________________
 
